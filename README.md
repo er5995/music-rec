@@ -70,13 +70,13 @@ Claude is prompted with explicit instructions on what it should and shouldn't do
 
 ## What I'd change if this were a real product
 
-1) Latency
+1) Latency:
 Two sequential calls with no caching means every request pays full cost. Common moods like "focus" or "hype" could be clustered and cached. Claude only needs to run for genuinely novel input.
 
-2) Cost
+2) Cost:
 At any real volume, calling Claude per request for a mood that's been seen a thousand times is wasteful. A lightweight classifier in front of Claude would route common inputs to cached responses and reserve the LLM for the long tail.
 
-3) Observability
+3) Observability:
 Right now there's no way to know if Claude's output quality is degrading over time. In production I'd want to trace each request end to end and track things like: did the JSON parse cleanly, did Spotify find the track, did the user actually engage with the result.
 
 ---
