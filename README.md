@@ -36,16 +36,16 @@ Claude isn't doing retrieval here. It's doing interpretation and structured reas
 
 ## Decisions I made and why
 
-1) Free text over photo upload
+1) Free text over photo upload:
 I originally planned multimodal input where you upload a photo of your environment and the AI infers the vibe. Cut it. Text is lower friction, works everywhere, and actually gives Claude better signal. A photo of a desk tells you less than "I've been heads down on this problem all day and need a reset." Multimodal is a v2 consideration if there's a clear user need.
 
-2) Client Credentials for Spotify, not OAuth**
+2) Client Credentials for Spotify, not OAuth:
 No user login. That removes personalization from listening history but keeps the demo frictionless. The tradeoff was worth it for a portfolio project. Adding OAuth would triple the complexity for a feature that doesn't demonstrate what I'm trying to demonstrate.
 
-3) Strict JSON output from Claude
+3) Strict JSON output from Claude:
 Claude is prompted to return only JSON, no prose wrapping. Explicit format, explicit failure. This is the part most people skip in demos and then wonder why their parsing breaks in production. The system prompt includes output schema, genre diversity instructions, and a fallback instruction for when the mood is ambiguous.
 
-4) Sequential API calls, not parallel
+4) Sequential API calls, not parallel:
 Claude runs first, Spotify second. Could parallelize Spotify lookups once Claude returns the track list, that would shave around 400ms. Kept it sequential for now because the logic is easier to trace and debug. Worth revisiting if latency becomes a UX issue.
 
 ---
@@ -54,16 +54,16 @@ Claude runs first, Spotify second. Could parallelize Spotify lookups once Claude
 
 This is an area I care about a lot, so I wanted to be intentional about it even in a side project.
 
-1) API key handling
+1) API key handling:
 All credentials stay server-side. The Anthropic and Spotify keys are never exposed to the browser. This is table stakes for any production AI app but it's worth stating explicitly because a lot of demos get this wrong.
 
-2) Data privacy
+2) Data privacy:
 No user input is stored or logged. What you type stays in the session and disappears when you close the tab. For an app that's asking how you're feeling, that matters.
 
-3) Model transparency
+3) Model transparency:
 The app makes it clear that recommendations are AI-generated. Users aren't meant to think this is a human curator or a Spotify algorithm. Knowing what kind of system you're interacting with is a basic expectation I think AI products should meet.
 
-4) Output boundaries
+4) Output boundaries:
 Claude is prompted with explicit instructions on what it should and shouldn't do. It's not a general assistant in this context, it's a scoped tool with a defined job. Keeping the model on task is both a product decision and a responsible AI decision.
 
 ---
