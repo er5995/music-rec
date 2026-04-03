@@ -1,6 +1,6 @@
 # Music Vibe Agent
 
-Type how you're feeling or select a mood. You get a playlist and something to keep you going.
+Select a mood or type how you're feeling. You get a playlist and something to keep you going.
 
 That's it. But the interesting part is what's happening under the hood.
 
