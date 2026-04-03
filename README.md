@@ -8,7 +8,7 @@ That's it. But the interesting part is what's happening under the hood.
 
 ## Why I built this
 
-I'm a TPM with a deep interest in AI systems and AI governance. I've always believed that the best TPMs don't just coordinate work, they actually understand the systems they're responsible for. System design, tradeoffs, what breaks and why. And what better way to understand an AI system than to build one yourself?
+I'm a Technical Program Manager with a deep interest in AI systems and AI governance. I've always believed that the best TPMs don't just coordinate work, they actually understand the systems they're responsible for. System design, tradeoffs, what breaks and why. And what better way to understand an AI system than to build one yourself?
 
 This is what a weekend of curiosity turned into.
 
