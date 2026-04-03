@@ -1,20 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Vibe & Sounds — AI-powered music recommendations for your every moment and mood." />
-    <title>Vibe &amp; Sounds — Music for Your Moment</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&family=Inter:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music Rec</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1, h2, h3 { font-family: 'Cormorant Garamond', serif; }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-ghibli-pink via-ghibli-peach to-warm-white backdrop-blur-xs p-8 relative overflow-hidden">
+
+  <!-- Floating clouds -->
+  <div class="absolute top-10 left-20 w-32 h-12 bg-ghibli-peach rounded-full opacity-50 animate-float"></div>
+  <div class="absolute top-24 right-10 w-48 h-16 bg-ghibli-pink rounded-full opacity-40 animate-float"></div>
+
+  <!-- Header -->
+  <header class="text-center mb-10 relative z-10">
+    <h1 class="text-ghibli-gold text-5xl font-display animate-fadeIn">Music Rec</h1>
+    <p class="text-ghibli-coral text-lg mt-2">Discover your magical sunset playlist</p>
+  </header>
+
+  <!-- Main content -->
+  <main class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+    <!-- Example card -->
+    <div class="bg-cream rounded-3xl shadow-lg p-6 relative overflow-hidden">
+      <h2 class="text-ghibli-gold text-2xl font-display mb-2">Song Title</h2>
+      <p class="text-ghibli-sage">Artist Name</p>
+      <div class="absolute top-0 right-0 w-12 h-12 bg-ghibli-coral rounded-full animate-float opacity-50"></div>
+      <div class="absolute bottom-0 left-0 w-8 h-8 bg-ghibli-lavender rounded-full animate-firefly"></div>
+      <!-- Floating notes -->
+      <span class="absolute bottom-0 left-1 text-ghibli-coral animate-note-float">♪</span>
+      <span class="absolute bottom-0 left-10 text-ghibli-lavender animate-note-float">♬</span>
+    </div>
+
+    <!-- Duplicate cards for demo -->
+    <div class="bg-cream rounded-3xl shadow-lg p-6 relative overflow-hidden">
+      <h2 class="text-ghibli-gold text-2xl font-display mb-2">Song Title 2</h2>
+      <p class="text-ghibli-sage">Artist Name</p>
+      <div class="absolute top-0 right-0 w-12 h-12 bg-ghibli-coral rounded-full animate-float opacity-50"></div>
+      <div class="absolute bottom-0 left-0 w-8 h-8 bg-ghibli-lavender rounded-full animate-firefly"></div>
+      <span class="absolute bottom-0 left-1 text-ghibli-coral animate-note-float">♪</span>
+      <span class="absolute bottom-0 left-10 text-ghibli-lavender animate-note-float">♬</span>
+    </div>
+
+    <div class="bg-cream rounded-3xl shadow-lg p-6 relative overflow-hidden">
+      <h2 class="text-ghibli-gold text-2xl font-display mb-2">Song Title 3</h2>
+      <p class="text-ghibli-sage">Artist Name</p>
+      <div class="absolute top-0 right-0 w-12 h-12 bg-ghibli-coral rounded-full animate-float opacity-50"></div>
+      <div class="absolute bottom-0 left-0 w-8 h-8 bg-ghibli-lavender rounded-full animate-firefly"></div>
+      <span class="absolute bottom-0 left-1 text-ghibli-coral animate-note-float">♪</span>
+      <span class="absolute bottom-0 left-10 text-ghibli-lavender animate-note-float">♬</span>
+    </div>
+  </main>
+
+  <!-- Play button -->
+  <div class="text-center mt-10 relative z-10">
+    <button class="bg-ghibli-coral text-warm-white px-6 py-3 rounded-xl shadow-md hover:scale-105 transition-transform font-display">
+      Play Playlist
+    </button>
+  </div>
+
+</body>
 </html>
