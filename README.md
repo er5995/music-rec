@@ -15,7 +15,7 @@ This is what a weekend of curiosity turned into.
 
 ## How it works
 
-User selects one of seven preset mood cards or enters their own mood/moment, Claude interprets the input and returns five track recommendations as structured JSON, Spotify fetches the real track data, and the app renders the final results.
+User selects one of seven preset mood cards or enters their own mood/moment, Claude interprets the input and returns five track recommendations as structured JSON, Spotify fetches the real track preview data, and the app renders the final results.
 
 Two API calls, sequential, about 2 seconds end to end.
 
@@ -26,10 +26,12 @@ Claude -- interprets mood, returns { message, tracks[] }
     |
 Spotify -- searches each track, returns metadata
     |
-UI -- motivation message + 5 track cards with album art
+5 track cards
 
 
 Claude isn't doing retrieval here. It's doing interpretation and structured reasoning. The Spotify call is just fulfillment. That's the pattern I wanted to validate.
+
+Note: This version is intentionally limited to Spotify metadata and short previews, not full in-app playback, because full playback would require Spotify Premium and a more complex authenticated playback flow that was outside the scope of the MVP.
 
 ---
 
@@ -89,14 +91,6 @@ The Anthropic JS SDK handles the Claude integration. I'm using it server-side to
 Spotify Web API with Client Credentials flow for track data. This gives access to search and metadata without requiring users to log in, which was the right call for a demo that needs to be frictionless.
 
 No database. State lives in the session. For a v1 this is fine. There's nothing to persist that's worth the infrastructure cost.
-
-```bash
-git clone <repo>
-cd vibe-agent
-npm install
-cp .env.example .env
-npm run dev
-```
 
 You'll need a free Spotify developer account and an Anthropic API key.
 
