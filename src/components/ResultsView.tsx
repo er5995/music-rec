@@ -109,13 +109,13 @@ function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackI
 
       {/* Action buttons */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-        {/* Preview play/pause button */}
-        {hasPreview ? (
+        {/* Preview play/pause — only shown when a preview URL exists */}
+        {hasPreview && (
           <motion.button
             onClick={onPlayPause}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.92 }}
-            title={isPlaying ? 'Pause preview' : 'Play preview'}
+            title={isPlaying ? 'Pause preview' : 'Play 30s preview'}
             style={{
               width: 34,
               height: 34,
@@ -133,23 +133,6 @@ function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackI
           >
             {isPlaying ? '⏸' : '▶'}
           </motion.button>
-        ) : (
-          <div
-            title="No preview available"
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: '50%',
-              border: '1.5px solid rgba(160,120,100,0.25)',
-              color: 'rgba(160,120,100,0.4)',
-              fontSize: 12,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            ▶
-          </div>
         )}
 
         {/* Open in Spotify */}
@@ -253,6 +236,7 @@ interface ResultsViewProps {
   moodInterpretation: string
   tracks: Track[]
   selectedMood: Mood | null
+  partialResults?: boolean
   onBack: () => void
 }
 
@@ -261,6 +245,7 @@ export function ResultsView({
   moodInterpretation,
   tracks,
   selectedMood,
+  partialResults = false,
   onBack,
 }: ResultsViewProps) {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
@@ -385,8 +370,8 @@ export function ResultsView({
         }}
       >
         {tracks.length === 0 && (
-          <div style={{ textAlign: 'center', color: '#7A5A48', padding: '40px 0' }}>
-            No tracks found. Try a different mood!
+          <div style={{ textAlign: 'center', color: '#7A5A48', padding: '40px 0', fontSize: 14 }}>
+            No previewable tracks found for this mood. Try a different one!
           </div>
         )}
 
@@ -400,6 +385,24 @@ export function ResultsView({
             onPlayPause={() => togglePlay(i)}
           />
         ))}
+
+        {/* Partial results notice */}
+        {partialResults && tracks.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            style={{
+              textAlign: 'center',
+              marginTop: 8,
+              fontSize: 12,
+              color: '#9B7B6A',
+              fontStyle: 'italic',
+            }}
+          >
+            Only {tracks.length} of 5 tracks had audio previews available — open them in Spotify for full playback.
+          </motion.div>
+        )}
 
         {/* Spotify attribution */}
         {tracks.some((t) => t.spotifyUrl) && (

@@ -22,6 +22,7 @@ export interface Track {
 export interface RecommendResponse {
   mood_interpretation: string
   tracks: Track[]
+  partialResults?: boolean  // true when fewer than 5 previewable tracks were found
 }
 
 // ─── App view states ──────────────────────────────────────────────────────────

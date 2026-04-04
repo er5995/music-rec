@@ -89,7 +89,7 @@ async function searchSpotifyTrack(query) {
 async function getClaudeRecommendations(moodInput) {
   const message = await anthropic.messages.create({
     model: 'claude-opus-4-6',
-    max_tokens: 1024,
+    max_tokens: 1536,
     messages: [
       {
         role: 'user',
@@ -105,14 +105,20 @@ Return exactly this structure:
     { "query": "Song Title - Artist Name" },
     { "query": "Song Title - Artist Name" },
     { "query": "Song Title - Artist Name" },
+    { "query": "Song Title - Artist Name" },
+    { "query": "Song Title - Artist Name" },
+    { "query": "Song Title - Artist Name" },
+    { "query": "Song Title - Artist Name" },
+    { "query": "Song Title - Artist Name" },
     { "query": "Song Title - Artist Name" }
   ]
 }
 
 Rules:
-- Exactly 5 recommendations
+- Exactly 10 recommendations (we need extras in case some lack audio previews)
 - Each query must be a real, existing song good for Spotify search
 - Format: "Exact Song Title - Exact Artist Name"
+- Prefer well-known songs from major artists — these are more likely to have audio previews
 - Return ONLY the JSON object, nothing else`,
       },
     ],
@@ -145,29 +151,21 @@ app.post('/api/recommend', async (req, res) => {
       return res.status(500).json({ error: 'Claude returned an unexpected response format.' });
     }
 
-    // 2. Search Spotify for each recommendation in parallel
-    const tracks = await Promise.all(
-      claudeResult.recommendations.slice(0, 5).map(async (rec) => {
-        const result = await searchSpotifyTrack(rec.query);
-        // If Spotify finds nothing, return a minimal fallback using the query string
-        if (!result) {
-          const [title, artist] = (rec.query || '').split(' - ');
-          return {
-            title: title?.trim() || rec.query,
-            artist: artist?.trim() || '',
-            album: '',
-            albumArt: null,
-            spotifyUrl: null,
-            previewUrl: null,
-          };
-        }
-        return result;
-      })
+    // 2. Search Spotify for all candidates in parallel, then keep only those
+    //    with a valid preview_url, up to 5 playable tracks.
+    const candidates = claudeResult.recommendations;
+    const spotifyResults = await Promise.all(
+      candidates.map((rec) => searchSpotifyTrack(rec.query))
     );
+
+    const tracks = spotifyResults
+      .filter((t) => t !== null && t.previewUrl !== null)
+      .slice(0, 5);
 
     res.json({
       mood_interpretation: claudeResult.mood_interpretation ?? mood,
       tracks,
+      partialResults: tracks.length < 5,
     });
   } catch (error) {
     console.error('Recommendation error:', error);

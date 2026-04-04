@@ -5,10 +5,10 @@ import { MoodGrid } from './components/MoodGrid'
 import { SpinningDisk } from './components/SpinningDisk'
 import { ResultsView } from './components/ResultsView'
 import { MOODS } from './types'
-import type { Track, View, Mood } from './types'
+import type { Track, View, Mood, RecommendResponse } from './types'
 
 // ─── API call ─────────────────────────────────────────────────────────────────
-async function fetchRecommendations(mood: string): Promise<{ mood_interpretation: string; tracks: Track[] }> {
+async function fetchRecommendations(mood: string): Promise<RecommendResponse> {
   const res = await fetch('/api/recommend', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -31,6 +31,7 @@ export default function App() {
   const [customText, setCustomText] = useState('')
   const [tracks, setTracks] = useState<Track[]>([])
   const [moodInterpretation, setMoodInterpretation] = useState('')
+  const [partialResults, setPartialResults] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -65,6 +66,7 @@ export default function App() {
       ])
       setTracks(result.tracks)
       setMoodInterpretation(result.mood_interpretation)
+      setPartialResults(result.partialResults ?? false)
       setView('results')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
@@ -78,6 +80,7 @@ export default function App() {
     setView('home')
     setTracks([])
     setMoodInterpretation('')
+    setPartialResults(false)
     setError(null)
   }
 
@@ -227,6 +230,7 @@ export default function App() {
             moodInterpretation={moodInterpretation}
             tracks={tracks}
             selectedMood={customText.trim() ? null : selectedMood}
+            partialResults={partialResults}
             onBack={handleBack}
           />
         )}
