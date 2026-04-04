@@ -1,12 +1,18 @@
+/* Google Fonts — must come before @tailwind directives */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap');
-
 :root {
-  --cream: #F7F3EC;
+  --cream: #FDF5E8;
+  --peach: #F0C8A8;
+  --apricot: #D4905A;
+  --sand: #C4A882;
+  --brown-dark: #2C1810;
+  --brown-mid: #7A5A48;
+  --brown-light: #9B7B6A;
 }
 
 * {
@@ -15,21 +21,32 @@
 
 body {
   margin: 0;
-  background: #0c0820;
+  background: #FDF5E8;
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
-  color: white;
+  color: #2C1810;
 }
 
-/* Subtle scrollbar */
+/* Mood grid: 4 columns on desktop, 2 on mobile */
+.mood-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 768px) {
+  .mood-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Subtle warm scrollbar */
 ::-webkit-scrollbar {
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(255,255,255,0.03);
+  background: rgba(196, 130, 90, 0.06);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12);
+  background: rgba(196, 130, 90, 0.25);
   border-radius: 2px;
 }
 
@@ -46,5 +63,16 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.35;
+  opacity: 0.22;
+}
+
+/* Remove default button focus outline — we use custom focus styles */
+button:focus-visible {
+  outline: 2px solid var(--apricot);
+  outline-offset: 2px;
+}
+
+/* Remove textarea resize handle for cleaner look */
+textarea {
+  resize: none;
 }
