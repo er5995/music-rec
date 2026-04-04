@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import type { Mood } from '../types'
 
@@ -39,7 +39,7 @@ function MoodCard({ mood, isSelected, onSelect, index }: MoodCardProps) {
       whileTap={{ scale: 0.97 }}
       style={{
         position: 'relative',
-        aspectRatio: '3/4',
+        aspectRatio: '1 / 1',
         borderRadius: 20,
         overflow: 'hidden',
         cursor: 'pointer',
@@ -148,7 +148,7 @@ function CustomCard({ value, onChange, index }: CustomCardProps) {
       transition={{ delay: 0.05 + index * 0.055, duration: 0.45, ease: 'easeOut' }}
       style={{
         position: 'relative',
-        aspectRatio: '3/4',
+        aspectRatio: '1 / 1',
         borderRadius: 20,
         overflow: 'hidden',
         background: 'rgba(255,248,240,0.92)',
@@ -226,13 +226,29 @@ export function MoodGrid({
   canSubmit,
   isLoading,
 }: MoodGridProps) {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.innerWidth <= 768
+  })
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <div style={{ width: '100%', maxWidth: 960, margin: '0 auto' }}>
       {/* 4-column grid on desktop, 2-column on mobile */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
           gap: 14,
         }}
         className="mood-grid"
