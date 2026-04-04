@@ -68,7 +68,8 @@ async function searchSpotifyTrack(query) {
     });
 
     if (!response.ok) {
-      console.error(`Spotify search failed for "${query}": ${response.status} ${response.statusText}`);
+      const body = await response.text().catch(() => '(unreadable)');
+      console.error(`Spotify search failed for "${query}": ${response.status} ${response.statusText}\n  body: ${body}`);
       return null;
     }
 
@@ -101,7 +102,7 @@ async function searchSpotifyTrack(query) {
 async function getClaudeRecommendations(moodInput) {
   const message = await anthropic.messages.create({
     model: 'claude-opus-4-6',
-    max_tokens: 1536,
+    max_tokens: 1024,
     messages: [
       {
         role: 'user',
@@ -113,32 +114,24 @@ Return exactly this structure:
 {
   "mood_interpretation": "brief poetic 3-6 word description of this feeling",
   "recommendations": [
-    { "query": "Song Title - Artist Name" },
-    { "query": "Song Title - Artist Name" },
-    { "query": "Song Title - Artist Name" },
-    { "query": "Song Title - Artist Name" },
-    { "query": "Song Title - Artist Name" },
-    { "query": "Song Title - Artist Name" },
-    { "query": "Song Title - Artist Name" },
-    { "query": "Song Title - Artist Name" },
-    { "query": "Song Title - Artist Name" },
-    { "query": "Song Title - Artist Name" }
+    { "title": "Exact Song Title", "artist": "Exact Artist Name", "reason": "One sentence on why this fits the mood." },
+    { "title": "Exact Song Title", "artist": "Exact Artist Name", "reason": "One sentence on why this fits the mood." },
+    { "title": "Exact Song Title", "artist": "Exact Artist Name", "reason": "One sentence on why this fits the mood." },
+    { "title": "Exact Song Title", "artist": "Exact Artist Name", "reason": "One sentence on why this fits the mood." },
+    { "title": "Exact Song Title", "artist": "Exact Artist Name", "reason": "One sentence on why this fits the mood." }
   ]
 }
 
 Rules:
-- Exactly 10 recommendations (we need extras in case some lack audio previews)
-- Each query must be a real, existing song good for Spotify search
-- Format: "Exact Song Title - Exact Artist Name"
-- Prefer well-known songs from major artists — these are more likely to have audio previews
+- Exactly 5 recommendations
+- Real, existing songs only
+- reason: one evocative sentence explaining why this song fits the mood
 - Return ONLY the JSON object, nothing else`,
       },
     ],
   });
 
   const text = message.content[0]?.type === 'text' ? message.content[0].text.trim() : '';
-
-  // Strip any accidental markdown fences
   const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
   return JSON.parse(cleaned);
 }
@@ -152,7 +145,7 @@ app.post('/api/recommend', async (req, res) => {
       return res.status(400).json({ error: 'A mood or description is required.' });
     }
 
-    // 1. Ask Claude for structured JSON recommendations
+    // 1. Ask Claude for 5 recommendations (always the source of truth)
     const claudeResult = await getClaudeRecommendations(mood.trim());
 
     if (
@@ -163,36 +156,52 @@ app.post('/api/recommend', async (req, res) => {
       return res.status(500).json({ error: 'Claude returned an unexpected response format.' });
     }
 
-    // 2. Check Spotify credentials before attempting searches
+    // 2. Build base tracks from Claude output — these are always returned
+    const baseTracks = claudeResult.recommendations.slice(0, 5).map((rec) => ({
+      title: rec.title ?? '',
+      artist: rec.artist ?? '',
+      reason: rec.reason ?? '',
+      album: null,
+      albumArt: null,
+      spotifyUrl: null,
+      previewUrl: null,
+    }));
+
+    // 3. Attempt optional Spotify enrichment — failures never block the response
+    let spotifyEnriched = false;
     const hasSpotifyCredentials = !!(process.env.SPOTIFY_CLIENT_ID && process.env.SPOTIFY_CLIENT_SECRET);
-    if (!hasSpotifyCredentials) {
-      console.error('Spotify credentials missing — set SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in .env.local');
-      return res.status(500).json({ error: 'Spotify is not configured. Add SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET to your .env.local file.' });
+
+    if (hasSpotifyCredentials) {
+      try {
+        console.log('Attempting Spotify enrichment…');
+        const spotifyResults = await Promise.all(
+          baseTracks.map((t) => searchSpotifyTrack(`${t.title} ${t.artist}`))
+        );
+
+        let anyEnriched = false;
+        spotifyResults.forEach((result, i) => {
+          if (result) {
+            baseTracks[i].album = result.album;
+            baseTracks[i].albumArt = result.albumArt;
+            baseTracks[i].spotifyUrl = result.spotifyUrl;
+            baseTracks[i].previewUrl = result.previewUrl;
+            anyEnriched = true;
+          }
+        });
+
+        spotifyEnriched = anyEnriched;
+        console.log(`Spotify enrichment: ${spotifyResults.filter(Boolean).length}/${baseTracks.length} tracks enriched`);
+      } catch (spotifyErr) {
+        console.warn('Spotify enrichment failed (non-fatal):', spotifyErr?.message ?? spotifyErr);
+      }
+    } else {
+      console.log('Spotify credentials not set — returning Claude recommendations only.');
     }
-
-    // 3. Search Spotify for all candidates in parallel.
-    const candidates = claudeResult.recommendations;
-    console.log(`Searching Spotify for ${candidates.length} candidates…`);
-    const spotifyResults = await Promise.all(
-      candidates.map((rec) => searchSpotifyTrack(rec.query))
-    );
-
-    // Sort: tracks with preview_url first, then the rest. Take up to 5.
-    const found = spotifyResults.filter((t) => t !== null);
-    console.log(`Spotify: ${found.length}/${candidates.length} tracks found, ${found.filter(t => t.previewUrl).length} have previews`);
-
-    if (found.length === 0) {
-      return res.status(500).json({ error: 'Spotify returned no results. Check your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET.' });
-    }
-
-    const withPreview = found.filter((t) => t.previewUrl !== null);
-    const withoutPreview = found.filter((t) => t.previewUrl === null);
-    const tracks = [...withPreview, ...withoutPreview].slice(0, 5);
 
     res.json({
       mood_interpretation: claudeResult.mood_interpretation ?? mood,
-      tracks,
-      partialResults: tracks.length < 5,
+      tracks: baseTracks,
+      spotifyEnriched,
     });
   } catch (error) {
     console.error('Recommendation error:', error);

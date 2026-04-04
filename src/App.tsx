@@ -31,7 +31,7 @@ export default function App() {
   const [customText, setCustomText] = useState('')
   const [tracks, setTracks] = useState<Track[]>([])
   const [moodInterpretation, setMoodInterpretation] = useState('')
-  const [partialResults, setPartialResults] = useState(false)
+  const [spotifyEnriched, setSpotifyEnriched] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -66,7 +66,7 @@ export default function App() {
       ])
       setTracks(result.tracks)
       setMoodInterpretation(result.mood_interpretation)
-      setPartialResults(result.partialResults ?? false)
+      setSpotifyEnriched(result.spotifyEnriched ?? false)
       setView('results')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
@@ -80,7 +80,7 @@ export default function App() {
     setView('home')
     setTracks([])
     setMoodInterpretation('')
-    setPartialResults(false)
+    setSpotifyEnriched(false)
     setError(null)
   }
 
@@ -230,7 +230,7 @@ export default function App() {
             moodInterpretation={moodInterpretation}
             tracks={tracks}
             selectedMood={customText.trim() ? null : selectedMood}
-            partialResults={partialResults}
+            spotifyEnriched={spotifyEnriched}
             onBack={handleBack}
           />
         )}

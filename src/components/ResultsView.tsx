@@ -13,27 +13,25 @@ interface TrackItemProps {
 
 function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackItemProps) {
   const [imgError, setImgError] = useState(false)
-
   const hasPreview = Boolean(track.previewUrl)
 
   return (
     <motion.div
       initial={{ opacity: 0, x: -18 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.12 + index * 0.08, duration: 0.4, ease: 'easeOut' }}
+      transition={{ delay: 0.1 + index * 0.08, duration: 0.4, ease: 'easeOut' }}
       style={{
         display: 'flex',
-        alignItems: 'center',
         gap: 14,
-        padding: '12px 14px',
-        borderRadius: 14,
-        background: 'rgba(255,248,240,0.75)',
+        padding: '14px 16px',
+        borderRadius: 16,
+        background: 'rgba(255,248,240,0.82)',
         border: isPlaying
           ? `1.5px solid ${accentColor}80`
           : '1.5px solid rgba(196,130,90,0.15)',
         boxShadow: isPlaying
-          ? `0 4px 20px ${accentColor}20`
-          : '0 2px 8px rgba(0,0,0,0.06)',
+          ? `0 4px 20px ${accentColor}18`
+          : '0 2px 8px rgba(0,0,0,0.05)',
         transition: 'border-color 0.2s, box-shadow 0.2s',
       }}
     >
@@ -41,6 +39,7 @@ function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackI
       <div
         style={{
           width: 22,
+          paddingTop: 2,
           textAlign: 'center',
           fontSize: 13,
           fontWeight: 700,
@@ -54,22 +53,22 @@ function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackI
       {/* Album art */}
       <div
         style={{
-          width: 48,
-          height: 48,
+          width: 52,
+          height: 52,
           borderRadius: 10,
           overflow: 'hidden',
           flexShrink: 0,
-          background: `linear-gradient(135deg, ${accentColor}40, rgba(200,160,120,0.25))`,
+          background: `linear-gradient(135deg, ${accentColor}35, rgba(200,160,120,0.2))`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 20,
+          fontSize: 22,
         }}
       >
         {track.albumArt && !imgError ? (
           <img
             src={track.albumArt}
-            alt={track.album}
+            alt={track.album ?? ''}
             onError={() => setImgError(true)}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
@@ -78,7 +77,7 @@ function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackI
         )}
       </div>
 
-      {/* Track info */}
+      {/* Track info + reason */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div
           style={{
@@ -105,110 +104,141 @@ function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackI
           {track.artist}
           {track.album ? ` · ${track.album}` : ''}
         </div>
-      </div>
-
-      {/* Action buttons */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-        {/* Preview button — always shown (backend guarantees preview_url exists) */}
-        {hasPreview && (
-          <motion.button
-            onClick={onPlayPause}
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.95 }}
-            title={isPlaying ? 'Pause preview' : 'Play 30s preview'}
+        {track.reason && (
+          <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 5,
-              padding: '6px 12px',
-              borderRadius: 999,
-              border: `1.5px solid ${accentColor}`,
-              background: isPlaying ? accentColor : 'transparent',
-              color: isPlaying ? 'white' : accentColor,
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: 'pointer',
-              fontFamily: 'Inter, sans-serif',
-              whiteSpace: 'nowrap',
+              fontSize: 11,
+              color: '#9B7B6A',
+              marginTop: 5,
+              lineHeight: 1.45,
+              fontStyle: 'italic',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
             }}
           >
-            <span style={{ fontSize: 10 }}>{isPlaying ? '⏸' : '▶'}</span>
-            {isPlaying ? 'Pause' : 'Preview'}
-          </motion.button>
+            {track.reason}
+          </div>
         )}
 
-        {/* Open in Spotify */}
-        {track.spotifyUrl && (
-          <motion.a
-            href={track.spotifyUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.95 }}
-            title="Open in Spotify"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 5,
-              padding: '6px 12px',
-              borderRadius: 999,
-              border: '1.5px solid rgba(30,215,96,0.6)',
-              background: 'rgba(30,215,96,0.08)',
-              color: '#1a7a3a',
-              fontSize: 12,
-              fontWeight: 600,
-              textDecoration: 'none',
-              fontFamily: 'Inter, sans-serif',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            <span style={{ fontSize: 13 }}>♫</span>
-            Spotify
-          </motion.a>
-        )}
+        {/* Action buttons — below the text on mobile-friendly layout */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 10, flexWrap: 'wrap' }}>
+          {/* Preview button — active if previewUrl exists, greyed out otherwise */}
+          {hasPreview ? (
+            <motion.button
+              onClick={onPlayPause}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.95 }}
+              title={isPlaying ? 'Pause preview' : 'Play 30s preview'}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+                padding: '5px 11px',
+                borderRadius: 999,
+                border: `1.5px solid ${accentColor}`,
+                background: isPlaying ? accentColor : 'transparent',
+                color: isPlaying ? 'white' : accentColor,
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer',
+                fontFamily: 'Inter, sans-serif',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <span style={{ fontSize: 9 }}>{isPlaying ? '⏸' : '▶'}</span>
+              {isPlaying ? 'Pause' : 'Preview'}
+            </motion.button>
+          ) : (
+            <div
+              title="Preview unavailable"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+                padding: '5px 11px',
+                borderRadius: 999,
+                border: '1.5px solid rgba(180,140,110,0.3)',
+                color: 'rgba(150,110,85,0.45)',
+                fontSize: 11,
+                fontWeight: 600,
+                fontFamily: 'Inter, sans-serif',
+                whiteSpace: 'nowrap',
+                cursor: 'default',
+              }}
+            >
+              <span style={{ fontSize: 9 }}>▶</span>
+              Preview unavailable
+            </div>
+          )}
+
+          {/* Open in Spotify — only shown when we have a URL */}
+          {track.spotifyUrl && (
+            <motion.a
+              href={track.spotifyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.95 }}
+              title="Open in Spotify"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+                padding: '5px 11px',
+                borderRadius: 999,
+                border: '1.5px solid rgba(30,215,96,0.55)',
+                background: 'rgba(30,215,96,0.07)',
+                color: '#1a7a3a',
+                fontSize: 11,
+                fontWeight: 600,
+                textDecoration: 'none',
+                fontFamily: 'Inter, sans-serif',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <span style={{ fontSize: 12 }}>♫</span>
+              Open in Spotify
+            </motion.a>
+          )}
+        </div>
       </div>
     </motion.div>
   )
 }
 
 // ─── AudioPlayer ──────────────────────────────────────────────────────────────
-// Manages a single global audio element for preview playback
 interface AudioPlayerProps {
-  previewUrl: string | null
-  isPlaying: boolean
+  previewUrl: string
   accentColor: string
 }
 
-function AudioPlayer({ previewUrl, isPlaying, accentColor }: AudioPlayerProps) {
+function AudioPlayer({ previewUrl, accentColor }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
-    if (isPlaying && previewUrl) {
-      audio.src = previewUrl
-      audio.volume = 0.7
-      audio.play().catch(() => {})
-    } else {
-      audio.pause()
-    }
-  }, [isPlaying, previewUrl])
-
-  if (!previewUrl || !isPlaying) return null
+    audio.src = previewUrl
+    audio.volume = 0.7
+    audio.play().catch(() => {})
+    return () => { audio.pause() }
+  }, [previewUrl])
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 8 }}
+      exit={{ opacity: 0, y: 10 }}
       style={{
         position: 'fixed',
         bottom: 20,
         left: '50%',
         transform: 'translateX(-50%)',
-        background: 'rgba(253,245,235,0.95)',
+        background: 'rgba(253,245,235,0.96)',
         backdropFilter: 'blur(16px)',
-        border: `1.5px solid ${accentColor}60`,
+        border: `1.5px solid ${accentColor}55`,
         borderRadius: 999,
         padding: '8px 20px',
         fontSize: 12,
@@ -218,19 +248,19 @@ function AudioPlayer({ previewUrl, isPlaying, accentColor }: AudioPlayerProps) {
         display: 'flex',
         alignItems: 'center',
         gap: 8,
-        boxShadow: `0 8px 32px ${accentColor}25`,
+        boxShadow: `0 8px 32px ${accentColor}20`,
         whiteSpace: 'nowrap',
       }}
     >
-      <motion.div
+      <motion.span
         animate={{ scale: [1, 1.3, 1] }}
         transition={{ duration: 0.8, repeat: Infinity }}
-        style={{ color: accentColor, fontSize: 14 }}
+        style={{ color: accentColor }}
       >
         ♫
-      </motion.div>
+      </motion.span>
       Playing 30s preview
-      <audio ref={audioRef} onEnded={() => {}} />
+      <audio ref={audioRef} />
     </motion.div>
   )
 }
@@ -241,7 +271,7 @@ interface ResultsViewProps {
   moodInterpretation: string
   tracks: Track[]
   selectedMood: Mood | null
-  partialResults?: boolean
+  spotifyEnriched: boolean
   onBack: () => void
 }
 
@@ -250,7 +280,7 @@ export function ResultsView({
   moodInterpretation,
   tracks,
   selectedMood,
-  partialResults = false,
+  spotifyEnriched,
   onBack,
 }: ResultsViewProps) {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
@@ -279,11 +309,11 @@ export function ResultsView({
       <div
         style={{
           position: 'relative',
-          background: 'rgba(253,245,235,0.88)',
+          background: 'rgba(253,245,235,0.9)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
-          borderBottom: '1px solid rgba(196,130,90,0.18)',
-          padding: '56px 24px 36px',
+          borderBottom: '1px solid rgba(196,130,90,0.15)',
+          padding: '56px 24px 32px',
           textAlign: 'center',
         }}
       >
@@ -313,17 +343,17 @@ export function ResultsView({
           ← Back
         </motion.button>
 
-        {/* Mood hero image if available */}
+        {/* Mood avatar */}
         {selectedMood && (
           <div
             style={{
-              width: 80,
-              height: 80,
+              width: 72,
+              height: 72,
               borderRadius: '50%',
               overflow: 'hidden',
-              margin: '0 auto 16px',
-              border: `3px solid ${accentColor}80`,
-              boxShadow: `0 4px 20px ${accentColor}30`,
+              margin: '0 auto 14px',
+              border: `2.5px solid ${accentColor}70`,
+              boxShadow: `0 4px 16px ${accentColor}28`,
             }}
           >
             <img
@@ -335,7 +365,6 @@ export function ResultsView({
           </div>
         )}
 
-        {/* "now playing" label */}
         <div
           style={{
             fontSize: 11,
@@ -346,40 +375,55 @@ export function ResultsView({
             marginBottom: 8,
           }}
         >
-          ♫ now playing
+          ♫ your playlist
         </div>
 
         <h1
           className="font-display"
-          style={{ fontSize: 32, fontWeight: 700, color: '#2C1810', margin: '0 0 6px', lineHeight: 1.15 }}
+          style={{ fontSize: 30, fontWeight: 700, color: '#2C1810', margin: '0 0 6px', lineHeight: 1.15 }}
         >
           {moodName}
         </h1>
 
         {moodInterpretation && (
-          <p style={{ fontSize: 14, color: '#7A5A48', margin: 0, fontStyle: 'italic' }}>
+          <p style={{ fontSize: 14, color: '#7A5A48', margin: '0 0 10px', fontStyle: 'italic' }}>
             {moodInterpretation}
           </p>
+        )}
+
+        {/* Spotify enrichment status */}
+        {!spotifyEnriched && (
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              marginTop: 4,
+              fontSize: 11,
+              color: '#9B7B6A',
+              background: 'rgba(196,130,90,0.08)',
+              border: '1px solid rgba(196,130,90,0.2)',
+              borderRadius: 999,
+              padding: '4px 12px',
+            }}
+          >
+            <span>ℹ</span>
+            Curated by Claude AI · Previews unavailable without Spotify access
+          </div>
         )}
       </div>
 
       {/* Track list */}
       <div
         style={{
-          maxWidth: 640,
+          maxWidth: 680,
           margin: '0 auto',
-          padding: '28px 20px',
+          padding: '24px 20px 40px',
           display: 'flex',
           flexDirection: 'column',
           gap: 10,
         }}
       >
-        {tracks.length === 0 && (
-          <div style={{ textAlign: 'center', color: '#7A5A48', padding: '40px 0', fontSize: 14 }}>
-            No tracks found. Check that your Spotify credentials are set in .env.local and the server is restarted.
-          </div>
-        )}
-
         {tracks.map((track, i) => (
           <TrackItem
             key={i}
@@ -391,53 +435,29 @@ export function ResultsView({
           />
         ))}
 
-        {/* Partial results notice */}
-        {partialResults && tracks.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            style={{
-              textAlign: 'center',
-              marginTop: 8,
-              fontSize: 12,
-              color: '#9B7B6A',
-              fontStyle: 'italic',
-            }}
-          >
-            Only {tracks.length} of 5 tracks had audio previews available — open them in Spotify for full playback.
-          </motion.div>
-        )}
-
-        {/* Spotify attribution */}
-        {tracks.some((t) => t.spotifyUrl) && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            style={{
-              textAlign: 'center',
-              marginTop: 16,
-              fontSize: 12,
-              color: '#9B7B6A',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-            }}
-          >
-            <span style={{ color: '#1DB954', fontSize: 14 }}>♫</span>
-            Powered by Spotify · Click ♫ on any track to open in Spotify
-          </motion.div>
-        )}
+        {/* Attribution footer */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.65 }}
+          style={{
+            textAlign: 'center',
+            marginTop: 12,
+            fontSize: 11,
+            color: 'rgba(120,90,70,0.5)',
+            letterSpacing: '0.04em',
+          }}
+        >
+          Recommendations by Claude AI{spotifyEnriched ? ' · Track data via Spotify' : ''}
+        </motion.div>
       </div>
 
-      {/* Sticky audio player for preview */}
+      {/* Sticky now-playing banner */}
       <AnimatePresence>
         {playingIndex !== null && currentTrack?.previewUrl && (
           <AudioPlayer
+            key={playingIndex}
             previewUrl={currentTrack.previewUrl}
-            isPlaying={true}
             accentColor={accentColor}
           />
         )}

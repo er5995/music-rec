@@ -8,11 +8,14 @@ export interface Mood {
   accent: string       // accent hex color for this mood
 }
 
-// ─── Track (Spotify-enriched result) ─────────────────────────────────────────
+// ─── Track ────────────────────────────────────────────────────────────────────
+// Claude always provides title, artist, reason.
+// Spotify fields are optional enrichment — all may be null if Spotify is unavailable.
 export interface Track {
   title: string
   artist: string
-  album: string
+  reason: string          // why Claude picked this track for the mood
+  album: string | null    // from Spotify enrichment
   albumArt: string | null
   spotifyUrl: string | null
   previewUrl: string | null
@@ -22,7 +25,7 @@ export interface Track {
 export interface RecommendResponse {
   mood_interpretation: string
   tracks: Track[]
-  partialResults?: boolean  // true when fewer than 5 previewable tracks were found
+  spotifyEnriched: boolean  // whether Spotify enrichment succeeded
 }
 
 // ─── App view states ──────────────────────────────────────────────────────────
