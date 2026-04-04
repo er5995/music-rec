@@ -15,7 +15,7 @@ This is what a weekend of curiosity turned into.
 
 ## How it works
 
-User types a mood or picks one of 8 preset cards, Claude interprets it and returns a motivation message plus 5 track recommendations as structured JSON, Spotify fetches the real track data (album art, links), results render.
+User selects one of seven preset mood cards or enters their own mood/moment, Claude interprets the input and returns five track recommendations as structured JSON, Spotify fetches the real track data, and the app renders the final results.
 
 Two API calls, sequential, about 2 seconds end to end.
 
