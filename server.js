@@ -57,7 +57,6 @@ async function getSpotifyToken() {
 
 // ─── Spotify track search ─────────────────────────────────────────────────────
 // Searches up to 5 results per query and prefers whichever has a preview_url.
-// Note: Spotify has broadly deprecated preview_url, so many tracks return null.
 async function searchSpotifyTrack(query) {
   try {
     const token = await getSpotifyToken();
@@ -68,14 +67,21 @@ async function searchSpotifyTrack(query) {
       signal: AbortSignal.timeout(6_000),
     });
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.error(`Spotify search failed for "${query}": ${response.status} ${response.statusText}`);
+      return null;
+    }
 
     const data = await response.json();
     const items = data.tracks?.items ?? [];
-    if (items.length === 0) return null;
+    if (items.length === 0) {
+      console.warn(`Spotify: no results for query "${query}"`);
+      return null;
+    }
 
     // Prefer the first result that has a preview_url; fall back to the top result
     const best = items.find((t) => t.preview_url) ?? items[0];
+    console.log(`Spotify: "${query}" → "${best.name}" by ${best.artists?.[0]?.name} (preview: ${best.preview_url ? 'yes' : 'no'})`);
 
     return {
       title: best.name,
@@ -85,7 +91,8 @@ async function searchSpotifyTrack(query) {
       spotifyUrl: best.external_urls?.spotify ?? null,
       previewUrl: best.preview_url ?? null,
     };
-  } catch {
+  } catch (err) {
+    console.error(`Spotify search error for "${query}":`, err?.message ?? err);
     return null;
   }
 }
@@ -156,14 +163,28 @@ app.post('/api/recommend', async (req, res) => {
       return res.status(500).json({ error: 'Claude returned an unexpected response format.' });
     }
 
-    // 2. Search Spotify for all candidates in parallel.
+    // 2. Check Spotify credentials before attempting searches
+    const hasSpotifyCredentials = !!(process.env.SPOTIFY_CLIENT_ID && process.env.SPOTIFY_CLIENT_SECRET);
+    if (!hasSpotifyCredentials) {
+      console.error('Spotify credentials missing — set SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in .env.local');
+      return res.status(500).json({ error: 'Spotify is not configured. Add SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET to your .env.local file.' });
+    }
+
+    // 3. Search Spotify for all candidates in parallel.
     const candidates = claudeResult.recommendations;
+    console.log(`Searching Spotify for ${candidates.length} candidates…`);
     const spotifyResults = await Promise.all(
       candidates.map((rec) => searchSpotifyTrack(rec.query))
     );
 
     // Sort: tracks with preview_url first, then the rest. Take up to 5.
     const found = spotifyResults.filter((t) => t !== null);
+    console.log(`Spotify: ${found.length}/${candidates.length} tracks found, ${found.filter(t => t.previewUrl).length} have previews`);
+
+    if (found.length === 0) {
+      return res.status(500).json({ error: 'Spotify returned no results. Check your SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET.' });
+    }
+
     const withPreview = found.filter((t) => t.previewUrl !== null);
     const withoutPreview = found.filter((t) => t.previewUrl === null);
     const tracks = [...withPreview, ...withoutPreview].slice(0, 5);

@@ -376,7 +376,7 @@ export function ResultsView({
       >
         {tracks.length === 0 && (
           <div style={{ textAlign: 'center', color: '#7A5A48', padding: '40px 0', fontSize: 14 }}>
-            No previewable tracks found for this mood. Try a different one!
+            No tracks found. Check that your Spotify credentials are set in .env.local and the server is restarted.
           </div>
         )}
 
