@@ -56,10 +56,12 @@ async function getSpotifyToken() {
 }
 
 // ─── Spotify track search ─────────────────────────────────────────────────────
+// Searches up to 5 results per query and prefers whichever has a preview_url.
+// Note: Spotify has broadly deprecated preview_url, so many tracks return null.
 async function searchSpotifyTrack(query) {
   try {
     const token = await getSpotifyToken();
-    const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`;
+    const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=5`;
 
     const response = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
@@ -69,16 +71,19 @@ async function searchSpotifyTrack(query) {
     if (!response.ok) return null;
 
     const data = await response.json();
-    const track = data.tracks?.items?.[0];
-    if (!track) return null;
+    const items = data.tracks?.items ?? [];
+    if (items.length === 0) return null;
+
+    // Prefer the first result that has a preview_url; fall back to the top result
+    const best = items.find((t) => t.preview_url) ?? items[0];
 
     return {
-      title: track.name,
-      artist: track.artists?.map((a) => a.name).join(', ') ?? '',
-      album: track.album?.name ?? '',
-      albumArt: track.album?.images?.[0]?.url ?? null,
-      spotifyUrl: track.external_urls?.spotify ?? null,
-      previewUrl: track.preview_url ?? null,
+      title: best.name,
+      artist: best.artists?.map((a) => a.name).join(', ') ?? '',
+      album: best.album?.name ?? '',
+      albumArt: best.album?.images?.[0]?.url ?? null,
+      spotifyUrl: best.external_urls?.spotify ?? null,
+      previewUrl: best.preview_url ?? null,
     };
   } catch {
     return null;
@@ -151,16 +156,17 @@ app.post('/api/recommend', async (req, res) => {
       return res.status(500).json({ error: 'Claude returned an unexpected response format.' });
     }
 
-    // 2. Search Spotify for all candidates in parallel, then keep only those
-    //    with a valid preview_url, up to 5 playable tracks.
+    // 2. Search Spotify for all candidates in parallel.
     const candidates = claudeResult.recommendations;
     const spotifyResults = await Promise.all(
       candidates.map((rec) => searchSpotifyTrack(rec.query))
     );
 
-    const tracks = spotifyResults
-      .filter((t) => t !== null && t.previewUrl !== null)
-      .slice(0, 5);
+    // Sort: tracks with preview_url first, then the rest. Take up to 5.
+    const found = spotifyResults.filter((t) => t !== null);
+    const withPreview = found.filter((t) => t.previewUrl !== null);
+    const withoutPreview = found.filter((t) => t.previewUrl === null);
+    const tracks = [...withPreview, ...withoutPreview].slice(0, 5);
 
     res.json({
       mood_interpretation: claudeResult.mood_interpretation ?? mood,
