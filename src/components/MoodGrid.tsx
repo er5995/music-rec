@@ -188,7 +188,7 @@ function CustomCard({ value, onChange, index }: CustomCardProps) {
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Type your mood or current moment…"
+        placeholder="Put it into words…"
         rows={4}
         style={{
           width: '100%',
@@ -209,7 +209,7 @@ function CustomCard({ value, onChange, index }: CustomCardProps) {
       />
 
       <div style={{ fontSize: 11, color: '#9B7B6A', textAlign: 'center', lineHeight: 1.4 }}>
-        Describe how you feel — Claude will find the perfect songs
+        What’s on your mind? Say it your way. Leave the rest to us.
       </div>
     </motion.div>
   )
