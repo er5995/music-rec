@@ -143,7 +143,7 @@ export default function App() {
                   lineHeight: 1.1,
                 }}
               >
-                What's your vibe right now?
+                Made for this moment.
               </h1>
 
               <p
@@ -155,7 +155,7 @@ export default function App() {
                   lineHeight: 1.65,
                 }}
               >
-                Choose a mood or describe your moment — Claude will find the perfect 5 tracks via Spotify
+                Choose a mood or describe your moment — we’ll find five tracks just for you.
               </p>
             </motion.div>
 
@@ -205,7 +205,7 @@ export default function App() {
                 textAlign: 'center',
               }}
             >
-              Powered by Claude AI & Spotify · Inspired by Studio Ghibli
+              Inspired by Studio Ghibli
             </motion.div>
           </motion.div>
         )}
