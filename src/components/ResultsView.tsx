@@ -109,58 +109,63 @@ function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackI
 
       {/* Action buttons */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-        {/* Preview play/pause — only shown when a preview URL exists */}
+        {/* Preview button — always shown (backend guarantees preview_url exists) */}
         {hasPreview && (
           <motion.button
             onClick={onPlayPause}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.92 }}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.95 }}
             title={isPlaying ? 'Pause preview' : 'Play 30s preview'}
             style={{
-              width: 34,
-              height: 34,
-              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
+              padding: '6px 12px',
+              borderRadius: 999,
               border: `1.5px solid ${accentColor}`,
               background: isPlaying ? accentColor : 'transparent',
               color: isPlaying ? 'white' : accentColor,
               fontSize: 12,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              fontWeight: 600,
               cursor: 'pointer',
-              padding: 0,
+              fontFamily: 'Inter, sans-serif',
+              whiteSpace: 'nowrap',
             }}
           >
-            {isPlaying ? '⏸' : '▶'}
+            <span style={{ fontSize: 10 }}>{isPlaying ? '⏸' : '▶'}</span>
+            {isPlaying ? 'Pause' : 'Preview'}
           </motion.button>
         )}
 
         {/* Open in Spotify */}
-        {track.spotifyUrl ? (
+        {track.spotifyUrl && (
           <motion.a
             href={track.spotifyUrl}
             target="_blank"
             rel="noopener noreferrer"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.92 }}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.95 }}
             title="Open in Spotify"
             style={{
-              width: 34,
-              height: 34,
-              borderRadius: '50%',
-              border: '1.5px solid rgba(30,215,96,0.5)',
-              background: 'rgba(30,215,96,0.08)',
-              color: '#1DB954',
-              fontSize: 15,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
+              gap: 5,
+              padding: '6px 12px',
+              borderRadius: 999,
+              border: '1.5px solid rgba(30,215,96,0.6)',
+              background: 'rgba(30,215,96,0.08)',
+              color: '#1a7a3a',
+              fontSize: 12,
+              fontWeight: 600,
               textDecoration: 'none',
+              fontFamily: 'Inter, sans-serif',
+              whiteSpace: 'nowrap',
             }}
           >
-            ♫
+            <span style={{ fontSize: 13 }}>♫</span>
+            Spotify
           </motion.a>
-        ) : null}
+        )}
       </div>
     </motion.div>
   )
