@@ -1,4 +1,4 @@
-# Made for this Moment - Music Agent
+# Made for Your Moments - Music Agent
 
 Select a mood or type how you're feeling. You get a playlist and something to keep you going.
 
