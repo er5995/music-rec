@@ -72,7 +72,7 @@ export const MOODS: Mood[] = [
   {
     id: 'classical',
     name: 'Classical',
-    description: 'Timeless masterpieces for refined moments',
+    description: 'Timeless masterpieces',
     image: 'Classical.png',
     fallbackImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=700&q=80',
     accent: '#9A7B5A',
