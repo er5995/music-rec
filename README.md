@@ -4,6 +4,8 @@ Select a mood or describe how you’re feeling, and the app turns that input int
 
 Simple on the surface. More interesting under the hood.
 
+Link to demo: https://drive.google.com/file/d/1fso6wwyXSRdc03-XStXxc5VUOcsvItTW/view?usp=share_link
+
 ## Why I built this
 
 I’m a Technical Program Manager with a deep interest in AI systems and AI governance. I’ve always believed that the best TPMs do more than coordinate execution, they understand the systems they’re responsible for. How they work, where they break, what tradeoffs shape them, and how those tradeoffs affect the user experience.
