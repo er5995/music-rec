@@ -104,24 +104,6 @@ function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackI
           {track.artist}
           {track.album ? ` · ${track.album}` : ''}
         </div>
-        {track.reason && (
-          <div
-            style={{
-              fontSize: 11,
-              color: '#9B7B6A',
-              marginTop: 5,
-              lineHeight: 1.45,
-              fontStyle: 'italic',
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-            }}
-          >
-            {track.reason}
-          </div>
-        )}
-
         {/* Action buttons — below the text on mobile-friendly layout */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 10, flexWrap: 'wrap' }}>
           {/* Preview button — active if previewUrl exists, greyed out otherwise */}
@@ -154,22 +136,19 @@ function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackI
             <div
               title="Preview unavailable"
               style={{
+                width: 28,
+                height: 28,
+                borderRadius: '50%',
+                border: '1.5px solid rgba(180,140,110,0.25)',
+                color: 'rgba(150,110,85,0.3)',
+                fontSize: 10,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 5,
-                padding: '5px 11px',
-                borderRadius: 999,
-                border: '1.5px solid rgba(180,140,110,0.3)',
-                color: 'rgba(150,110,85,0.45)',
-                fontSize: 11,
-                fontWeight: 600,
-                fontFamily: 'Inter, sans-serif',
-                whiteSpace: 'nowrap',
+                justifyContent: 'center',
                 cursor: 'default',
               }}
             >
-              <span style={{ fontSize: 9 }}>▶</span>
-              Preview unavailable
+              ▶
             </div>
           )}
 
@@ -391,26 +370,6 @@ export function ResultsView({
           </p>
         )}
 
-        {/* Spotify enrichment status */}
-        {!spotifyEnriched && (
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              marginTop: 4,
-              fontSize: 11,
-              color: '#9B7B6A',
-              background: 'rgba(196,130,90,0.08)',
-              border: '1px solid rgba(196,130,90,0.2)',
-              borderRadius: 999,
-              padding: '4px 12px',
-            }}
-          >
-            <span>ℹ</span>
-            Curated by Claude AI · Previews unavailable without Spotify access
-          </div>
-        )}
       </div>
 
       {/* Track list */}
