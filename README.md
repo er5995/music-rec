@@ -35,7 +35,7 @@ For full playback, a Spotify Premium account and OAuth-based user authentication
 ## Decisions I made and why
 
 **Free text over photo upload**  
-I originally considered multimodal input, where a user could upload a photo and the model would infer the vibe. I cut it. Text is lower friction, works everywhere, and actually gives the model better signal. A photo of a desk says less than "I've been heads down all day and need a reset." Multimodal could be a useful v2, but it did not earn its complexity in the first version.
+I originally considered multimodal input, where a user could upload a photo and the model would infer the vibe. I cut it. Text is lower friction, works everywhere, and actually gives the model better signal. A photo of a desk says less than "I've been heads down all day and need a reset." Multimodal could be a useful v2, but not for the MVP.
 
 **Spotify Client Credentials Instead of OAuth**   
 I chose not to require login. That means no personalization based on listening history, but it keeps the experience frictionless and makes the demo immediately usable. For this project, that tradeoff was worth it. Adding OAuth would have introduced significantly more complexity without strengthening the part of the system I actually wanted to demonstrate.
