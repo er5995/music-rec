@@ -37,18 +37,17 @@ For full playback, a Spotify Premium account and OAuth-based user authentication
 **Free text over photo upload**  
 I originally considered multimodal input, where a user could upload a photo and the model would infer the vibe. I cut it. Text is lower friction, works everywhere, and actually gives the model better signal. A photo of a desk says less than "I've been heads down all day and need a reset." Multimodal could be a useful v2, but it did not earn its complexity in the first version.
 
-**Spotify Client Credentials instead of OAuth**  
+**Spotify Client Credentials Instead of OAuth** 
 I chose not to require login. That means no personalization based on listening history, but it keeps the experience frictionless and makes the demo immediately usable. For this project, that tradeoff was worth it. Adding OAuth would have introduced significantly more complexity without strengthening the part of the system I actually wanted to demonstrate.
 
-**Recommendations first, Spotify second** 
+**Recommendations First, Spotify Second** 
+Earlier versions of this app blocked the response if Spotify returned nothing. That was the wrong dependency model. The AI generates the recommendations, and Spotify only enriches them. If enrichment fails, the recommendations still render. That makes the experience more resilient and more honest about what each part of the system is actually responsible for.
 
-Earlier versions of this app blocked the response if Spotify returned nothing. That was the wrong dependency model. The AI generates the recommendations; Spotify only enriches them. If enrichment fails, the recommendations still render. That makes the experience more resilient and more honest about what each part of the system is actually responsible for.
+**Strict Structured AI Output** 
+The model is prompted to return JSON only, with an explicit schema and clear output boundaries. No prose wrapping, no loose formatting, and no guesswork in parsing. It’s the kind of implementation detail that looks small in a demo but becomes essential once reliability matters.
 
-**Strict structured AI output**
-The model is prompted to return JSON only, with an explicit schema and clear output boundaries. No prose wrapping, no loose formatting, and no guesswork in parsing. It’s the kind of implementation detail that looks small in a demo but becomes essential the moment reliability matters.
-
-**Sequential API calls over a more optimized pipeline**  
-The model runs first, Spotify second. There is room to reduce latency by parallelizing some of the fulfillment work once the track list is available, but I kept the flow sequential because it is easier to reason about, easier to debug, and sufficient for the current scope. If latency became a real UX issue, this would be one of the first places I'd optimize.
+**Sequential API Calls Instead of a More Optimized Pipeline** 
+The model runs first and Spotify runs second. There is room to reduce latency by parallelizing some of the fulfillment work once the track list is available, but I kept the flow sequential because it is easier to reason about, easier to debug, and sufficient for the current scope. If latency became a real user experience issue, this would be one of the first places I’d optimize.
 
 ## Security and governance
 
