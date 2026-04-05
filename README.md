@@ -40,11 +40,11 @@ I originally considered multimodal input, where a user could upload a photo and 
 **Spotify Client Credentials instead of OAuth**  
 I chose not to require login. That means no personalization based on listening history, but it keeps the experience frictionless and makes the demo immediately usable. For this project, that tradeoff was worth it. Adding OAuth would have introduced significantly more complexity without strengthening the part of the system I actually wanted to demonstrate.
 
-**Claude as the fallback, not Spotify**  
-Earlier versions of this app blocked the response if Spotify returned nothing. That was the wrong dependency model. Claude generates the recommendations. Spotify enriches them. If enrichment fails, the recommendations still ship. This matters for resilience and for being honest about what each part of the system is actually responsible for.
+**Recommendations first, Spotify second
+Earlier versions of this app blocked the response if Spotify returned nothing. That was the wrong dependency model. The AI generates the recommendations; Spotify only enriches them. If enrichment fails, the recommendations still render. That makes the experience more resilient and more honest about what each part of the system is actually responsible for.
 
-**Strict structured output from Claude**  
-Claude is prompted to return JSON only, with an explicit schema and clear output boundaries. No prose wrapping, no loose formatting, no guesswork in parsing. This is one of those implementation details that seems small in demos and becomes critical the moment reliability matters.
+**Strict structured AI output
+The model is prompted to return JSON only, with an explicit schema and clear output boundaries. No prose wrapping, no loose formatting, and no guesswork in parsing. It’s the kind of implementation detail that looks small in a demo but becomes essential the moment reliability matters.
 
 **Sequential API calls over a more optimized pipeline**  
 Claude runs first, Spotify second. There is room to reduce latency by parallelizing some of the fulfillment work once the track list is available, but I kept the flow sequential because it is easier to reason about, easier to debug, and sufficient for the current scope. If latency became a real UX issue, this would be one of the first places I'd optimize.
@@ -98,7 +98,7 @@ State lives in the session. For this version, there was nothing worth persisting
 
 ## Running it locally
 
-You'll need an Anthropic API key. Spotify credentials are optional — the app returns Claude's recommendations regardless, and Spotify enrichment is attempted when credentials are present.
+Anthropic API access is required. Spotify is optional: without it, the app still generates Claude-powered music recommendations. With valid Spotify credentials and the required account access, the app can display Spotify enrichment such as album art, links, and available playback/previews.
 
 ```bash
 cp .env.example .env.local
