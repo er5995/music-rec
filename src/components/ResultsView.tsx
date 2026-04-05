@@ -77,7 +77,7 @@ function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackI
         )}
       </div>
 
-      {/* Track info + reason */}
+      {/* Track info */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div
           style={{
@@ -104,84 +104,85 @@ function TrackItem({ track, index, accentColor, isPlaying, onPlayPause }: TrackI
           {track.artist}
           {track.album ? ` · ${track.album}` : ''}
         </div>
-        {/* Action buttons — below the text on mobile-friendly layout */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 10, flexWrap: 'wrap' }}>
-          {/* Preview button — active if previewUrl exists, greyed out otherwise */}
-          {hasPreview ? (
-            <motion.button
-              onClick={onPlayPause}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.95 }}
-              title={isPlaying ? 'Pause preview' : 'Play 30s preview'}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 5,
-                padding: '5px 11px',
-                borderRadius: 999,
-                border: `1.5px solid ${accentColor}`,
-                background: isPlaying ? accentColor : 'transparent',
-                color: isPlaying ? 'white' : accentColor,
-                fontSize: 11,
-                fontWeight: 600,
-                cursor: 'pointer',
-                fontFamily: 'Inter, sans-serif',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <span style={{ fontSize: 9 }}>{isPlaying ? '⏸' : '▶'}</span>
-              {isPlaying ? 'Pause' : 'Preview'}
-            </motion.button>
-          ) : (
-            <div
-              title="Preview unavailable"
-              style={{
-                width: 28,
-                height: 28,
-                borderRadius: '50%',
-                border: '1.5px solid rgba(180,140,110,0.25)',
-                color: 'rgba(150,110,85,0.3)',
-                fontSize: 10,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'default',
-              }}
-            >
-              ▶
-            </div>
-          )}
+      </div>
 
-          {/* Open in Spotify — only shown when we have a URL */}
-          {track.spotifyUrl && (
-            <motion.a
-              href={track.spotifyUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.95 }}
-              title="Open in Spotify"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 5,
-                padding: '5px 11px',
-                borderRadius: 999,
-                border: '1.5px solid rgba(30,215,96,0.55)',
-                background: 'rgba(30,215,96,0.07)',
-                color: '#1a7a3a',
-                fontSize: 11,
-                fontWeight: 600,
-                textDecoration: 'none',
-                fontFamily: 'Inter, sans-serif',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              <span style={{ fontSize: 12 }}>♫</span>
-              Open in Spotify
-            </motion.a>
-          )}
-        </div>
+      {/* Action buttons — right side, vertically centred */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0 }}>
+        {/* Preview button — active if previewUrl exists, greyed-out icon otherwise */}
+        {hasPreview ? (
+          <motion.button
+            onClick={onPlayPause}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.95 }}
+            title={isPlaying ? 'Pause preview' : 'Play 30s preview'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
+              padding: '5px 11px',
+              borderRadius: 999,
+              border: `1.5px solid ${accentColor}`,
+              background: isPlaying ? accentColor : 'transparent',
+              color: isPlaying ? 'white' : accentColor,
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'Inter, sans-serif',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <span style={{ fontSize: 9 }}>{isPlaying ? '⏸' : '▶'}</span>
+            {isPlaying ? 'Pause' : 'Preview'}
+          </motion.button>
+        ) : (
+          <div
+            title="Preview unavailable"
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+              border: '1.5px solid rgba(180,140,110,0.25)',
+              color: 'rgba(150,110,85,0.3)',
+              fontSize: 10,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'default',
+            }}
+          >
+            ▶
+          </div>
+        )}
+
+        {/* Open in Spotify — only shown when we have a URL */}
+        {track.spotifyUrl && (
+          <motion.a
+            href={track.spotifyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.95 }}
+            title="Open in Spotify"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
+              padding: '5px 11px',
+              borderRadius: 999,
+              border: '1.5px solid rgba(30,215,96,0.55)',
+              background: 'rgba(30,215,96,0.07)',
+              color: '#1a7a3a',
+              fontSize: 11,
+              fontWeight: 600,
+              textDecoration: 'none',
+              fontFamily: 'Inter, sans-serif',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <span style={{ fontSize: 12 }}>♫</span>
+            Open in Spotify
+          </motion.a>
+        )}
       </div>
     </motion.div>
   )
