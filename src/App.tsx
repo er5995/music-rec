@@ -31,7 +31,6 @@ export default function App() {
   const [customText, setCustomText] = useState('')
   const [tracks, setTracks] = useState<Track[]>([])
   const [moodInterpretation, setMoodInterpretation] = useState('')
-  const [spotifyEnriched, setSpotifyEnriched] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -66,7 +65,6 @@ export default function App() {
       ])
       setTracks(result.tracks)
       setMoodInterpretation(result.mood_interpretation)
-      setSpotifyEnriched(result.spotifyEnriched ?? false)
       setView('results')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
@@ -80,7 +78,6 @@ export default function App() {
     setView('home')
     setTracks([])
     setMoodInterpretation('')
-    setSpotifyEnriched(false)
     setError(null)
   }
 
@@ -208,7 +205,7 @@ export default function App() {
                 textAlign: 'center',
               }}
             >
-              Inspired by Studio Ghibli
+              Made by Eman R.
             </motion.div>
           </motion.div>
         )}
@@ -230,7 +227,6 @@ export default function App() {
             moodInterpretation={moodInterpretation}
             tracks={tracks}
             selectedMood={customText.trim() ? null : selectedMood}
-            spotifyEnriched={spotifyEnriched}
             onBack={handleBack}
           />
         )}

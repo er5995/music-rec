@@ -250,7 +250,6 @@ interface ResultsViewProps {
   moodInterpretation: string
   tracks: Track[]
   selectedMood: Mood | null
-  spotifyEnriched: boolean
   onBack: () => void
 }
 
@@ -259,7 +258,6 @@ export function ResultsView({
   moodInterpretation,
   tracks,
   selectedMood,
-  spotifyEnriched,
   onBack,
 }: ResultsViewProps) {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null)
@@ -394,21 +392,6 @@ export function ResultsView({
           />
         ))}
 
-        {/* Attribution footer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.65 }}
-          style={{
-            textAlign: 'center',
-            marginTop: 12,
-            fontSize: 11,
-            color: 'rgba(120,90,70,0.5)',
-            letterSpacing: '0.04em',
-          }}
-        >
-          Recommendations by Claude AI{spotifyEnriched ? ' · Track data via Spotify' : ''}
-        </motion.div>
       </div>
 
       {/* Sticky now-playing banner */}
