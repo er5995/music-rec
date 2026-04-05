@@ -41,6 +41,7 @@ I originally considered multimodal input, where a user could upload a photo and 
 I chose not to require login. That means no personalization based on listening history, but it keeps the experience frictionless and makes the demo immediately usable. For this project, that tradeoff was worth it. Adding OAuth would have introduced significantly more complexity without strengthening the part of the system I actually wanted to demonstrate.
 
 **Recommendations first, Spotify second** 
+
 Earlier versions of this app blocked the response if Spotify returned nothing. That was the wrong dependency model. The AI generates the recommendations; Spotify only enriches them. If enrichment fails, the recommendations still render. That makes the experience more resilient and more honest about what each part of the system is actually responsible for.
 
 **Strict structured AI output**
