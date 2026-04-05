@@ -17,7 +17,7 @@ This project came from that mindset. I wanted to build a small but complete AI s
 A user selects one of seven preset mood cards or enters their own mood or moment. The model interprets that input and returns five structured track recommendations. The app then attempts to enrich those recommendations through Spotify, adding album art, track metadata, and preview links where available.
 At a high level, the flow looks like this:
 
-mood input → model interprets intent and returns structured JSON → Spotify resolves tracks and metadata → UI renders final recommendations
+`mood input → model interprets intent and returns structured JSON → Spotify resolves tracks and metadata → UI renders final recommendations`
 
 The model is the source of truth. The five recommendations are always shown, regardless of whether Spotify enrichment succeeds. Spotify is treated as an optional enhancement layer, not a dependency.
 
