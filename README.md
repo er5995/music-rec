@@ -15,6 +15,7 @@ This project came from that mindset. I wanted to build a small but complete AI s
 ## How it works
 
 A user selects one of seven preset mood cards or enters their own mood or moment. The model interprets that input and returns five structured track recommendations. The app then attempts to enrich those recommendations through Spotify, adding album art, track metadata, and preview links where available.
+
 At a high level, the flow looks like this:
 
 `mood input → model interprets intent and returns structured JSON → Spotify resolves tracks and metadata → UI renders final recommendations`
@@ -46,7 +47,7 @@ Earlier versions of this app blocked the response if Spotify returned nothing. T
 The model is prompted to return JSON only, with an explicit schema and clear output boundaries. No prose wrapping, no loose formatting, and no guesswork in parsing. It’s the kind of implementation detail that looks small in a demo but becomes essential the moment reliability matters.
 
 **Sequential API calls over a more optimized pipeline**  
-Claude runs first, Spotify second. There is room to reduce latency by parallelizing some of the fulfillment work once the track list is available, but I kept the flow sequential because it is easier to reason about, easier to debug, and sufficient for the current scope. If latency became a real UX issue, this would be one of the first places I'd optimize.
+The model runs first, Spotify second. There is room to reduce latency by parallelizing some of the fulfillment work once the track list is available, but I kept the flow sequential because it is easier to reason about, easier to debug, and sufficient for the current scope. If latency became a real UX issue, this would be one of the first places I'd optimize.
 
 ## Security and governance
 
@@ -62,15 +63,15 @@ User input is not persisted. What a user types stays in the session and disappea
 The app makes it clear that recommendations are AI-generated. Users should know what kind of system they are interacting with.
 
 **Output boundaries**  
-Claude is not used here as a general-purpose assistant. It is scoped to a single job: interpret user input and return structured music recommendations. Keeping the model tightly constrained is both a product decision and a responsible AI decision.
+The model is not used here as a general-purpose assistant. It is scoped to a single job: interpret user input and return structured music recommendations. Keeping the model tightly constrained is both a product decision and a responsible AI decision.
 
 ## What I'd change if this were a real product
 
 **Latency**  
-Right now, every request pays the full cost of two sequential API calls. In production, I'd cluster and cache common moods like "focus" or "hype" and reserve Claude for genuinely novel or ambiguous input.
+Right now, every request pays the full cost of two sequential API calls. In production, I'd cluster and cache common moods like "focus" or "hype" and reserve Anthropic API access is required. Spotify is optional: the app still generates AI-powered music recommendations without it. With valid Spotify credentials and the necessary account access, the app can enrich results with album art, links, and available previews or playback features. for genuinely novel or ambiguous input.
 
 **Cost**  
-At any real volume, calling Claude for the same mood patterns over and over would be wasteful. I'd add a lightweight classifier or routing layer in front of the LLM so common inputs could map to cached recommendations, while Claude handles the long tail.
+At any real volume, calling the model for the same mood patterns over and over would be wasteful. I’d add a lightweight classification or routing layer in front of it so common inputs could map to cached recommendations, while the model handles the long tail.
 
 **Observability**  
 There is currently no real measurement layer around recommendation quality or system health. In production, I'd want end-to-end tracing and metrics such as parse success rate, Spotify match rate, preview availability, click-through, and downstream engagement.
@@ -97,7 +98,7 @@ State lives in the session. For this version, there was nothing worth persisting
 
 ## Running it locally
 
-Anthropic API access is required. Spotify is optional: without it, the app still generates Claude-powered music recommendations. With valid Spotify credentials and the required account access, the app can display Spotify enrichment such as album art, links, and available playback/previews.
+Anthropic API access is required. Spotify is optional: the app still generates AI-powered music recommendations without it. With valid Spotify credentials and the necessary account access, the app can enrich results with album art, links, and available previews or playback features.
 
 ```bash
 cp .env.example .env.local
