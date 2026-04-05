@@ -14,15 +14,14 @@ This project came from that mindset. I wanted to build a small but complete AI s
 
 ## How it works
 
-A user selects one of seven preset mood cards or enters their own mood or moment. Claude interprets that input and returns five structured track recommendations. The app then attempts to enrich those recommendations through Spotify, adding album art, track metadata, and preview links where available.
-
+A user selects one of seven preset mood cards or enters their own mood or moment. The model interprets that input and returns five structured track recommendations. The app then attempts to enrich those recommendations through Spotify, adding album art, track metadata, and preview links where available.
 At a high level, the flow looks like this:
 
-`mood input → Claude interprets intent and returns structured JSON → Spotify resolves tracks and metadata → UI renders final recommendations`
+mood input → model interprets intent and returns structured JSON → Spotify resolves tracks and metadata → UI renders final recommendations
 
-Claude is the source of truth. The five recommendations are always shown, regardless of whether Spotify enrichment succeeds. Spotify is treated as an optional enhancement layer, not a dependency.
+The model is the source of truth. The five recommendations are always shown, regardless of whether Spotify enrichment succeeds. Spotify is treated as an optional enhancement layer, not a dependency.
 
-The core pattern I wanted to validate was simple: Claude handles interpretation, not retrieval. Spotify handles fulfillment. That separation keeps the model scoped to the part it is best at, turning ambiguous human input into structured intent, while a deterministic API handles the rest.
+The core pattern I wanted to validate was simple: the model handles interpretation, not retrieval. Spotify handles fulfillment. That separation keeps the model scoped to the part it is best at — turning ambiguous human input into structured intent — while a deterministic API handles the rest.
 
 ## A note on Spotify previews
 
