@@ -4,7 +4,7 @@ Select a mood or describe how you're feeling, and the app turns that input into 
 
 Simple on the surface. More interesting under the hood.
 
-Link to demo: https://drive.google.com/file/d/1feSEeXV1eNFvFVT9etYLlJSMNccJSd7I/view?usp=share_link
+Link to demo: https://drive.google.com/file/d/1bMPgTI6x2RQEsiCuT0VMaZmb7O6POiko/view?usp=share_link
 
 ## Why I built this
 
