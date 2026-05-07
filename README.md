@@ -22,7 +22,7 @@ At a high level, the flow looks like this:
 
 The model is the source of truth. The five recommendations are always shown, regardless of whether Spotify enrichment succeeds. Spotify is treated as an optional enhancement layer, not a dependency.
 
-The core pattern I wanted to validate was simple: the model handles interpretation, not retrieval. Spotify handles fulfillment. That separation keeps the model scoped to the part it is best at — turning ambiguous human input into structured intent — while a deterministic API handles the rest.
+The core pattern I wanted to validate was simple: the model handles interpretation, not retrieval. Spotify handles fulfillment. That separation keeps the model scoped to the part it is best at: turning ambiguous human input into structured intent, while a deterministic API handles the rest.
 
 ## A note on Spotify previews
 
